@@ -55,8 +55,11 @@ Cloning with submodules:
 
 To clone this project, please follow the following steps:
 ```text
-git clone --recurse-submodules https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
-cd YOUR_REPO_NAME
+HTTPS:
+git clone --recurse-submodules https://github.com/GiornoGioGo/Chip-8-Emulator.git
+SSH:
+git clone --recurse-submodules git@github.com:GiornoGioGo/Chip-8-Emulator.git
+cd Chip-8-Emulator
 ```
 If you have already cloned without submodules:
 ```text
