@@ -12,6 +12,7 @@ add_subdirectory(thirdParty/raylib)
 add_executable(chip8
     src/main.c
     src/chip8.c
+    src/platform_raylib.c
 )
 
 target_link_libraries(chip8 PRIVATE raylib)
