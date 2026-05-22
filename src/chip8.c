@@ -107,46 +107,33 @@ void chip8_cycle(struct chip8 *cpu)
 
     uint16_t firstDigit = (opcode & 0xF000);
 
-    //printf("opcode: %04X nnn: %04X nn: %04X n: %04X x: %04X y: %04X firstdigit: %04X\n", opcode, nnn, nn, n, x, y, firstDigit);
-
     switch (firstDigit) {
     case 0x6000:
         cpu->V[x] = nn;
-        printf("Set V%d to %02X\n", x, nn);
         break;
     case 0x7000:
         cpu->V[x] += nn;
-        printf("Add %02X to V%d\n", nn, x);
         break;
     case 0xA000:
         cpu->I = nnn;
-        printf("Set I to %04X\n", nnn);
         break;
     case 0x1000:
         cpu->pc = nnn;
-        printf("pc jumps to %04X\n", nnn);
         break;
     case 0x3000:
         if (cpu->V[x] == nn) {
             cpu->pc += 2;
-            printf("V%d is equal to %02X....skipping\n", x, nn);
         }
-        else 
-            printf("v%d is not equal to %02X....not skipping\n", x, nn);
         break;
     case 0x4000:
         if (cpu->V[x] != nn) {
             cpu->pc += 2;
-            printf("v%d is not equal to %02X....skipping\n", x, nn);
         }
-        else 
-            printf("V%d is equal to %02X....not skipping\n", x, nn);
         break;
     case 0x5000:
         if (n == 0)
             if (cpu->V[x] == cpu->V[y]) {
                 cpu->pc += 2;
-                printf("v%d is equal to v%d.....skipping\n", x, y);
             }
             else 
                 printf("Unknown opcode\n");
@@ -156,20 +143,18 @@ void chip8_cycle(struct chip8 *cpu)
     case 0x0000:
             if (opcode == 0x00E0) {
                 memset(cpu->display, 0, sizeof(cpu->display));
-                printf("Clearing display...\n");
             }
             else if (opcode == 0x00EE) {
                 cpu->sp -= 1;
                 cpu->pc = cpu->stack[cpu->sp];
             }
             else 
-                printf("Unknown or unimplemented 0-opcode\n");
+                printf("Unknown or unimplemented opcode\n");
             break;
     case 0xD000:
             uint8_t xPos = cpu->V[x];
             uint8_t yPos = cpu->V[y];
             cpu->V[0xF] = 0;
-            //uint16_t pIndex = yPos * 64 + xPos;
 
             for (uint8_t row = 0; row < n; row++) {
                 uint8_t sprite_byte = cpu->memory[cpu->I + row];
@@ -246,8 +231,7 @@ void chip8_cycle(struct chip8 *cpu)
                     cpu->V[0xF] = 1;
                 else 
                     cpu->V[0xF] = 0;
-
-                //cpu->V[0xF] = cpu->V[x] & 0x80;
+                    
                 cpu->V[x] = cpu->V[x] << 1;
                 break;
             default:
@@ -259,10 +243,7 @@ void chip8_cycle(struct chip8 *cpu)
             if (n == 0)
                 if (cpu->V[x] != cpu->V[y]) {
                     cpu->pc += 2;
-                    printf("Skipping...");
                 }
-                else 
-                    printf("Not skipping...");
             else 
                 printf("Uknown opcode");
             break;
