@@ -52,8 +52,9 @@ sudo apt install build-essential cmake git libx11-dev libxrandr-dev libxinerama-
 
 ## Cloning
 Cloning with submodules:
-```text
+
 To clone this project, please follow the following steps:
+```text
 git clone --recurse-submodules https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
 cd YOUR_REPO_NAME
 ```
