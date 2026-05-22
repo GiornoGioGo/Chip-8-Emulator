@@ -1,15 +1,17 @@
 #include "platform_raylib.h"
 
+static const int CHIP8_SCALE = 10;
+
 void chip8_render(struct chip8 *cpu)
 {
     for (size_t y = 0; y <= 31; y++) {
             for (size_t x = 0; x <= 63; x++) {
                 size_t index = y * 64 + x;
 
-                int screen_x = x * 10;
-                int screen_y = y * 10;
+                int screen_x = x * CHIP8_SCALE;
+                int screen_y = y * CHIP8_SCALE;
                 if (cpu->display[index] == 1)
-                    DrawRectangle(screen_x, screen_y, 10, 10, WHITE);
+                    DrawRectangle(screen_x, screen_y, CHIP8_SCALE, CHIP8_SCALE, WHITE);
             }
         }
 }

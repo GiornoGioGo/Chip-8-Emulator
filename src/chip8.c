@@ -20,10 +20,10 @@ void chip8_init(struct chip8 *cpu)
     cpu->delay_timer = 0;
     cpu->sound_timer = 0;
 
-    cpu->pc = 0x200;
+    cpu->pc = CHIP8_PROGRAM_START;
 
-    for (size_t i = 0; i < 80; i++) {
-       cpu->memory[0x050 + i] = fontset[i];
+    for (size_t i = 0; i < CHIP8_FONTSET_SIZE; i++) {
+       cpu->memory[CHIP8_FONT_START + i] = fontset[i];
     }
 }
 
@@ -88,7 +88,7 @@ int chip8_load_rom(struct chip8 *cpu, const char *rom_path)
 
 void chip8_cycle(struct chip8 *cpu) 
 {
-    if (cpu->pc >= 4094) {
+    if (cpu->pc >= CHIP8_MEMORY_SIZE) {
         printf("PC reached end of memory (0x%04X). Halting cycle.\n", cpu->pc);
         return; 
     }
