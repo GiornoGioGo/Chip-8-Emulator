@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run CHIP-8",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/chip8",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "Build CHIP-8"
+    }
+  ]
+}

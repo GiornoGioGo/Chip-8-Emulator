@@ -1,0 +1,7 @@
+build/
+roms/
+.vscode/.cache/
+*.out
+*.o
+*.exe
+.DS_Store
