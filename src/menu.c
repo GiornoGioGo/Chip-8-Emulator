@@ -62,13 +62,18 @@ int menu_create(char **rom_list, int rom_count)
 bool menu_display(char **rom_list, char *rom_path, int menu_mode)
 {
     static uint8_t selected_index = 0;
+    static uint8_t num_pages = (NUM_ROMS + MAX_VISIBLE_ITEMS - 1) / MAX_VISIBLE_ITEMS;
+    uint8_t current_page = (selected_index / MAX_VISIBLE_ITEMS) + 1;
+
     uint8_t scroll_offset = (selected_index / MAX_VISIBLE_ITEMS) * MAX_VISIBLE_ITEMS;
     uint16_t start_x = 10;
     uint16_t start_y = 10;
-
+    
     int fontSize = 10;
     int paddingX = 4;
     int paddingY = 2;
+
+    DrawText(TextFormat("Page %d/%d", current_page, num_pages), PAGE_INDEX_POS_X, PAGE_INDEX_POS_Y, fontSize, WHITE);
 
     for (size_t i = scroll_offset; (i < scroll_offset + MAX_VISIBLE_ITEMS) && (i < NUM_ROMS); i++) {
         bool is_selected = (i == selected_index);

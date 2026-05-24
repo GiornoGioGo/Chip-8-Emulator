@@ -11,6 +11,8 @@
 #define CHIP8_EXTENTION ".ch8"
 #define NUM_ROMS 75
 #define MAX_VISIBLE_ITEMS 21
+#define PAGE_INDEX_POS_X 580
+#define PAGE_INDEX_POS_Y 300
 
 enum {
     MENU = 1,
