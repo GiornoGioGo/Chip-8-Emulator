@@ -62,10 +62,32 @@ int menu_create(char **rom_list, int rom_count)
 bool menu_display(char **rom_list, char *rom_path, int menu_mode)
 {
     static uint8_t selected_index = 0;
+    uint8_t scroll_offset = (selected_index / MAX_VISIBLE_ITEMS) * MAX_VISIBLE_ITEMS;
     uint16_t start_x = 10;
     uint16_t start_y = 10;
-    for (size_t i = 0; i < NUM_ROMS; i++) {
-        DrawText(rom_list[i], start_x, start_y, 10, WHITE);
+
+    int fontSize = 10;
+    int paddingX = 4;
+    int paddingY = 2;
+
+    for (size_t i = scroll_offset; (i < scroll_offset + MAX_VISIBLE_ITEMS) && (i < NUM_ROMS); i++) {
+        bool is_selected = (i == selected_index);
+
+        if (is_selected) {
+            int text_width = MeasureText(rom_list[i], fontSize);
+
+            DrawRectangle(
+                start_x - paddingX,
+                start_y - paddingY,
+                text_width + (paddingX * 2),
+                fontSize + (paddingY * 2),
+                WHITE
+            );
+            DrawText(rom_list[i], start_x, start_y, fontSize, BLACK);
+        } else {
+            DrawText(rom_list[i], start_x, start_y, fontSize, WHITE);
+        }
+        
         start_y += 15;
     }
 
@@ -77,13 +99,13 @@ bool menu_display(char **rom_list, char *rom_path, int menu_mode)
     if (IsKeyPressed(KEY_S)) {
             selected_index = (selected_index + 1) % NUM_ROMS;
             printf("%d\n", selected_index);
-        }
+    }
            
-        if (IsKeyPressed(KEY_ENTER)) {
+    if (IsKeyPressed(KEY_ENTER)) {
             strcat(rom_path, rom_list[selected_index]);
             printf("Selected ROM path: %s\n", rom_path);
             return true;
-        }
+    }
     
     return false;
 }

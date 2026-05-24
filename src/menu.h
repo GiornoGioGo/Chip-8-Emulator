@@ -10,6 +10,7 @@
 
 #define CHIP8_EXTENTION ".ch8"
 #define NUM_ROMS 75
+#define MAX_VISIBLE_ITEMS 21
 
 enum {
     MENU = 1,
