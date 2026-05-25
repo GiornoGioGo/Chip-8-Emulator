@@ -41,19 +41,20 @@ int chip8_load_rom(struct chip8 *cpu, const char *rom_path)
 
     printf("Rom size is %ld", rom_size);
 
+     if (rom_size < 0) {
+        perror("Error: ftell failed to read rom\n");
+        fclose(rom);
+        return EXIT_FAILURE;
+    } 
+
     if (rom_size > 3584) {
-        perror("Error: Rom file is too large");
+        perror("Error: Rom file is too large\n");
         fclose(rom);
         return EXIT_FAILURE;
     }
 
-    if (rom_size < 0) {
-        perror("Error: ftell failed to read rom");
-        fclose(rom);
-        return EXIT_FAILURE;
-    } 
     else if (rom_size == 0) {
-        perror("Error: Empty rom");
+        perror("Error: Empty rom\n");
         fclose(rom);
         return EXIT_FAILURE;
     }
@@ -62,7 +63,7 @@ int chip8_load_rom(struct chip8 *cpu, const char *rom_path)
 
     unsigned char *buffer = malloc(rom_size);
     if (buffer == NULL) {
-        perror("Error: Memory allocation failed");
+        perror("Error: Memory allocation failed\n");
         fclose(rom);
         return EXIT_FAILURE;
     }
@@ -70,7 +71,7 @@ int chip8_load_rom(struct chip8 *cpu, const char *rom_path)
     size_t memory_size = fread(buffer, 1, rom_size, rom);
 
     if (memory_size != rom_size) {
-        perror("Error: Rom size not equal");
+        perror("Error: Rom size not equal\n");
         free(buffer);
         fclose(rom);
         return EXIT_FAILURE;
