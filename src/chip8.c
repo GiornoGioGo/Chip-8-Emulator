@@ -1,7 +1,5 @@
 #include "chip8.h"
 
-uint8_t fontset[80];
-
 void chip8_init(struct chip8 *cpu)
 {
     //Reset memory
@@ -12,7 +10,7 @@ void chip8_init(struct chip8 *cpu)
     memset(cpu->V, 0, sizeof(cpu->V));
     //Reset stack
     memset(cpu->stack, 0, sizeof(cpu->stack));
-
+    //Reset keypad
     memset(cpu->keypad, 0, sizeof(cpu->keypad));
 
     cpu->I = 0;
@@ -32,7 +30,7 @@ int chip8_load_rom(struct chip8 *cpu, const char *rom_path)
     FILE *rom = fopen(rom_path, "rb");
     
     if (rom == NULL) {
-        perror("Error: Cannot open file");
+        perror("Error: Cannot open file\n");
         return EXIT_FAILURE;
     }
 
@@ -236,7 +234,7 @@ void chip8_cycle(struct chip8 *cpu)
                 cpu->V[x] = cpu->V[x] << 1;
                 break;
             default:
-                printf("Unknown 8XY opcode");
+                printf("Unknown 8XY opcode\n");
                 break;
             }
             break;
@@ -246,7 +244,7 @@ void chip8_cycle(struct chip8 *cpu)
                     cpu->pc += 2;
                 }
             else 
-                printf("Uknown opcode");
+                printf("Uknown opcode\n");
             break;
         case 0xB000:
                 cpu->pc = nnn + cpu->V[0];
@@ -301,7 +299,7 @@ void chip8_cycle(struct chip8 *cpu)
                 }
                 break;
             default:
-                printf("Unkown opcode.");
+                printf("Unkown opcode.\n");
                 break;
             }
             break;
@@ -309,7 +307,7 @@ void chip8_cycle(struct chip8 *cpu)
             uint8_t key = cpu->V[x];
 
             if (key > 0xF) {
-                printf("Invalid key");
+                printf("Invalid key\n");
                 break;
             }
 
@@ -323,7 +321,7 @@ void chip8_cycle(struct chip8 *cpu)
                     cpu->pc += 2;
                 break;
             default:
-                printf("Unknown opcode");
+                printf("Unknown opcode\n");
                 break;
             }
             break;

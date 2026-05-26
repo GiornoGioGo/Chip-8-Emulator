@@ -8,9 +8,6 @@ int menu_get_count(const char *dir_path)
     DIR *dir_ptr;
     struct dirent *entry;
     int item_count = 0;
-    //const char *chip8_extention = ".ch8";
-
-    //const char *dir_path = "roms/games/";
 
     dir_ptr = opendir(dir_path);
     if (dir_ptr == NULL) {
@@ -64,32 +61,29 @@ void menu_get_parent_directory(char *dest, const char *dir_path)
     }
 }
 
-// int menu_create(struct MenuItem *items, int rom_count)
-// {
-//     DIR *dir_ptr;
-//     struct dirent *entry;
-//     int counter = 0;
+bool contains_rom(const char *dir_path, int size)
+{
+    if (dir_path == NULL || size <= 0) {
+        return false; 
+    }
 
-//     const char *dir_path = "roms/games/";
+    int last_index = size - 1;
+
+    if (dir_path[last_index] == '8') {
+        return true;
+    }
     
-//     dir_ptr = opendir(dir_path);
-//     if (dir_ptr == NULL) {
-//         perror("Error opening directory");
-//         return EXIT_FAILURE;
-//     }
+    return false;
+}
 
-//      while ((entry = readdir(dir_ptr)) != NULL && counter < rom_count) {
-//         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
-//             continue;
-//         }
-//         if (strstr(entry->d_name, CHIP8_EXTENTION) != NULL) {
-//             strcpy(items[counter].item_display_name, entry->d_name);
-//             counter++;
-//         }
-//     }
-//     closedir(dir_ptr);
-//     return EXIT_SUCCESS;
-// }
+void menu_eject_rom(char *dir_path)
+{
+    char *last_slash = strrchr(dir_path, '/');
+
+    if (last_slash != NULL) {
+        *(last_slash + 1) = '\0'; 
+    }
+}
 
 int menu_load_directory(struct Menu *menu, const char *dir_path)
 {
@@ -183,14 +177,11 @@ int menu_load_directory(struct Menu *menu, const char *dir_path)
     menu->selected_index = 0;
 
     strcpy(menu->current_directory, dir_path);
-
-    //printf("Item count: %d\n", menu->item_count);
     return EXIT_SUCCESS;
 }
 
 bool menu_display(struct Menu *menu, char *dir_path, int menu_mode)
 {
-    //printf("Current directory: %s", menu->items->item_display_name);
     uint8_t num_pages = (menu->item_count + MAX_VISIBLE_ITEMS - 1) / MAX_VISIBLE_ITEMS;
     uint8_t current_page = (menu->selected_index / MAX_VISIBLE_ITEMS) + 1;
 
@@ -237,9 +228,7 @@ bool menu_display(struct Menu *menu, char *dir_path, int menu_mode)
            
     if (IsKeyPressed(KEY_ENTER)) {
             if (menu->items[menu->selected_index].item_type == ROM) {
-                //rom_path = menu->items[menu->selected_index].item_display_name;
                 strcat(dir_path, menu->items[menu->selected_index].item_display_name);
-                // strcpy(menu->current_directory, rom_path);
                 printf("Selected ROM path: %s\n", dir_path);
                 return true;
             }
@@ -329,15 +318,24 @@ void menu_pause_display(struct PauseMenu *pause)
     }
 }
 
-// bool menu_paused(struct Menu *menu)
-// {
-//     if (IsKeyPressed(KEY_P)) {
-//         if (menu->is_paused) {
-//             return false;
-//         }
-//         else {
-//             return true;
-//         }
-//     }
-//     return false;
-// }
+void menu_get_menu_mode(struct Menu *menu, struct PauseMenu *pause, int menu_mode, bool *should_quit)
+{
+
+    if (IsKeyPressed(KEY_P)) {
+                menu->menu_mode = RUNNING;
+            }
+
+    if (IsKeyPressed(KEY_ENTER)) {
+                switch (pause->selected_index) {
+                    case 0:
+                        menu->menu_mode = RUNNING;
+                        break;
+                    case 1:
+                        menu->menu_mode = MENU;
+                        break;
+                    case 2:
+                        *should_quit = true;
+                        break;
+                }
+        }
+}

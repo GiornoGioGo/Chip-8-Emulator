@@ -2,7 +2,10 @@
 #include "platform_raylib.h"
 #include "menu.h"
 
-int menu_mode;
+#define WINDOW_WIDTH 640
+#define WINDOW_HEIGHT 320
+#define WINDOW_TITLE "chip-8"
+#define WINDOW_FPS 60
 
 int main(int argc, char *argv[])
 {
@@ -16,8 +19,8 @@ int main(int argc, char *argv[])
     struct PauseMenu pause = {0};
     menu_pause_init(&pause);
 
-    InitWindow(640, 320, "Chip-8");
-    SetTargetFPS(60);
+    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
+    SetTargetFPS(WINDOW_FPS);
 
     menu_load_directory(&menu, "roms/");
 
@@ -25,15 +28,22 @@ int main(int argc, char *argv[])
 
     char dir_path[512] = "roms/";
 
-    menu_mode = MENU;
+    menu.menu_mode = MENU;
 
     menu.is_paused = false;
 
-    while (!WindowShouldClose()) {
+    bool should_quit = false;
+
+    while (!WindowShouldClose() && !should_quit) {
         BeginDrawing();
         ClearBackground(BLACK);
-        if (menu_mode == MENU) {
-            bool seleted_rom = menu_display(&menu, dir_path, menu_mode);
+        int dir_size = strlen(dir_path);
+
+        if (menu.menu_mode == MENU) {
+            if (contains_rom(dir_path, dir_size)) {
+                menu_eject_rom(dir_path);
+            }
+            bool seleted_rom = menu_display(&menu, dir_path,  menu.menu_mode);
 
             if (seleted_rom) {
                 chip8_init(&cpu);
@@ -42,10 +52,10 @@ int main(int argc, char *argv[])
                     printf("Failed to load ROM. Exiting program.\n");
                     return 1;
                 }
-                menu_mode = RUNNING;
+                menu.menu_mode = RUNNING;
             }
         }
-        else if (menu_mode == RUNNING) {
+        else if (menu.menu_mode == RUNNING) {
             chip8_set_keypad(&cpu);
 
             for (int i = 0; i < 12; i++) {
@@ -62,30 +72,12 @@ int main(int argc, char *argv[])
             chip8_render(&cpu);
 
             if (IsKeyPressed(KEY_P)) {
-                menu_mode = PAUSED;
+                menu.menu_mode = PAUSED;
             }
         }
-        else if (menu_mode == PAUSED) {
-
+        else if (menu.menu_mode == PAUSED) {
             menu_pause_display(&pause);
-
-            if (IsKeyPressed(KEY_P)) {
-                menu_mode = RUNNING;
-            }
-
-            if (IsKeyPressed(KEY_ENTER)) {
-                switch (pause.selected_index) {
-                    case 0:
-                        menu_mode = RUNNING;
-                        break;
-                    case 1:
-                        menu_mode = MENU;
-                        break;
-                    case 2:
-                        CloseWindow();
-                        break;
-                }
-            }
+            menu_get_menu_mode(&menu, &pause, menu.menu_mode, &should_quit);
         }
 
         EndDrawing();

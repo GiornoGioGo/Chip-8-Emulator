@@ -49,6 +49,7 @@ struct Menu
     char current_directory_name[64];
     int item_count;
     int selected_index;
+    int menu_mode;
     struct MenuItem *items;
     bool is_paused;
 };
@@ -68,5 +69,10 @@ bool menu_display(struct Menu *menu, char *rom_path, int menu_mode);
 void menu_pause_init(struct PauseMenu *pause);
 void menu_pause_display(struct PauseMenu *pause);
 void menu_get_parent_directory(char *dest, const char *dir_path);
+void menu_set_parent_directory(struct Menu *menu, const char *dir_path);
+void menu_get_menu_mode(struct Menu *menu, struct PauseMenu *pause, int menu_mode, bool *should_quit);
+bool contains_rom(const char *dir_path, int size);
+void menu_eject_rom(char *dir_path);
+  
 
 #endif

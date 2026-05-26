@@ -18,6 +18,8 @@ This project was built as a beginner-friendly emulator project to learn CPU fetc
 - ROM loading
 - raylib-based rendering
 - Static raylib build through CMake submodule
+- ROM selection menu
+- Pause menu
 
 ## Project Structure
 
@@ -56,12 +58,12 @@ Cloning with submodules:
 To clone this project, please follow the following steps:
 ```text
 HTTPS:
-git clone --recurse-submodules https://github.com/GiornoGioGo/Chip-8-Emulator.git
+git clone --recurse-submodule https://github.com/GiornoGioGo/Chip-8-Emulator.git
 SSH:
-git clone --recurse-submodules git@github.com:GiornoGioGo/Chip-8-Emulator.git
+git clone --recurse-submodule git@github.com:GiornoGioGo/Chip-8-Emulator.git
 cd Chip-8-Emulator
 ```
-If you have already cloned without submodules:
+If you have already cloned without submodule:
 ```text
 git submodules update --init --recursive
 ```
@@ -75,11 +77,11 @@ cmake --build build
 ## Running
 The program expects two command line arguments. One for the binary and another for the ROM you wish to run
 ```text
-.build/chip8 path/to/rom.ch8
+./build/chip8 path/to/rom.ch8
 ```
 Example:
 ```text
-.build/chip8 roms/games/Pong (1 player).ch8
+./build/chip8 roms/games/Pong (1 player).ch8
 ```
 I recommend cloning the following repo into a folder named "roms"
 ```text
@@ -96,6 +98,29 @@ CHIP-8 Keypad        Keyboard
 A 0 B F              Z X C V
 ```
 Note: Controls may vary depending on the ROM.
+
+## Menu navigation
+As mentioned this program features a fully functional file navigation system and a pause menu. This is to ensure selecting ROMs is a seamless experience.
+
+Below are the controls for navigating the Menu
+```text
+W = UP
+S = DOWN
+Enter = Select
+
+The ".." Symbol is the back button. Click enter on it to return to the previous directory.
+```
+
+Below are the controls for the pause menu
+```text
+W = UP
+S = DOWN
+Enter = Select
+
+Resume = Resume game
+Rom Menu = Return to the ROM menu
+Exit = Exit the program
+```
 
 ## Using my Repo
 This project is a learning experience and was built for fun. Feel free to use it however you wish :D
