@@ -12,7 +12,8 @@
 
 #define STACK_DEPTH 16
 
-enum {
+enum 
+{
     CHIP8_MEMORY_SIZE = 4096,
     CHIP8_DISPLAY_WIDTH = 64,
     CHIP8_DISPLAY_HEIGHT = 32,

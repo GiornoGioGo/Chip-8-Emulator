@@ -45,6 +45,25 @@ int menu_get_count(const char *dir_path)
     return item_count;
 }
 
+void menu_get_parent_directory(char *dest, const char *dir_path)
+{
+    strcpy(dest, dir_path);
+
+    char *last_slash = strrchr(dest, '/');
+
+    if (last_slash != NULL) {
+        *last_slash = '\0';
+
+        char *second_last_slash = strrchr(dest, '/');
+
+        if (second_last_slash != NULL) {
+            *(second_last_slash + 1) = '\0';
+        } else {
+            *last_slash = '/';
+        }
+    }
+}
+
 // int menu_create(struct MenuItem *items, int rom_count)
 // {
 //     DIR *dir_ptr;
@@ -101,12 +120,13 @@ int menu_load_directory(struct Menu *menu, const char *dir_path)
     if (strcmp(dir_path, MENU_ROOT_DIR) != 0) {
         strcpy(new_items[0].item_display_name, "..");
 
+        char parent_dir[64];
+        menu_get_parent_directory(parent_dir, dir_path);
         snprintf(
                 new_items[0].item_path,
                 sizeof(new_items[0].item_path),
-                "%s%s",
-                dir_path,
-                ".."
+                "%s",
+                parent_dir
             );
             new_items[0].item_type = BACK;
             counter++;
@@ -235,16 +255,89 @@ bool menu_display(struct Menu *menu, char *dir_path, int menu_mode)
                 return false;
             }
             else if (menu->items[menu->selected_index].item_type == BACK) {
-                char *test = strstr(dir_path, menu->current_directory_name);
+                strcpy(dir_path, menu->items[menu->selected_index].item_path);
+                strcpy(menu->current_directory, dir_path); 
+                menu_load_directory(menu, menu->items[menu->selected_index].item_path);
 
-                if (test != NULL) {
-                    *test = '\0';
-                }
-                printf("%s\n", dir_path);
-                menu_load_directory(menu, dir_path);
+                return false;
             }       
     }
     
     return false;
 }
 
+void menu_pause_init(struct PauseMenu *pause)
+{
+    pause->selected_index = 0;
+    pause->option_count = 3;
+    pause->title = "Paused";
+    pause->options[0] = "Resume";
+    pause->options[1] = "Rom Menu";
+    pause->options[2] = "Exit";
+}
+
+void menu_pause_display(struct PauseMenu *pause)
+{
+
+    if (IsKeyPressed(KEY_S))
+        pause->selected_index++;
+    if (IsKeyPressed(KEY_W))
+        pause->selected_index--;
+
+    if (pause->selected_index >= pause->option_count)
+        pause->selected_index = 0;
+    if (pause->selected_index < 0)
+        pause->selected_index = 2;
+
+    int titleSize = 50;
+    int titleX = (GetScreenWidth() / 2) - (MeasureText(pause->title, titleSize) / 2);
+    int titleY = (GetScreenHeight() * 0.2); // 30% down
+    DrawText(pause->title, titleX, titleY, titleSize, WHITE);
+
+    int menuFontSize = 30;
+    int startY = titleY + 80; 
+    int lineSpacing = 50;     
+
+    int x1 = (GetScreenWidth() / 2) - (MeasureText(pause->options[0], menuFontSize) / 2);
+    int y1 = startY + (0 * lineSpacing);
+    if (pause->selected_index == 0) {
+        DrawText(">", x1 - 20, y1, menuFontSize, WHITE);
+        DrawText(pause->options[0], x1, y1, menuFontSize, GRAY);
+    }
+    else {
+        DrawText(pause->options[0], x1, y1, menuFontSize, GRAY);
+    }
+
+    int x2 = (GetScreenWidth() / 2) - (MeasureText(pause->options[1], menuFontSize) / 2);
+    int y2 = startY + (1 * lineSpacing);
+    if (pause->selected_index == 1) {
+        DrawText(">", x2 - 20, y2, menuFontSize, WHITE);
+        DrawText(pause->options[1], x2, y2, menuFontSize, GRAY);
+    }
+    else {
+        DrawText(pause->options[1], x2, y2, menuFontSize, GRAY);
+    }
+
+    int x3 = (GetScreenWidth() / 2) - (MeasureText(pause->options[2], menuFontSize) / 2);
+    int y3 = startY + (2 * lineSpacing);
+    if (pause->selected_index == 2) {
+        DrawText(">", x3 - 20, y3, menuFontSize, WHITE);
+        DrawText(pause->options[2], x3, y3, menuFontSize, GRAY);
+    }
+    else {
+        DrawText(pause->options[2], x3, y3, menuFontSize, GRAY);
+    }
+}
+
+// bool menu_paused(struct Menu *menu)
+// {
+//     if (IsKeyPressed(KEY_P)) {
+//         if (menu->is_paused) {
+//             return false;
+//         }
+//         else {
+//             return true;
+//         }
+//     }
+//     return false;
+// }

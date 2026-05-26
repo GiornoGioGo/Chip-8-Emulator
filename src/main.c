@@ -8,22 +8,16 @@ int main(int argc, char *argv[])
 {
     struct chip8 cpu;
 
-    //char rom_path[512] = "roms/games/";
-
     srand(time(NULL));
     
-    //char **rom_list = malloc(count * sizeof(char *));
-    //struct MenuItem items[count];
     struct Menu menu = {0};
     menu.items = NULL;
 
-    //menu_create(items, count);
+    struct PauseMenu pause = {0};
+    menu_pause_init(&pause);
 
     InitWindow(640, 320, "Chip-8");
     SetTargetFPS(60);
-
-    // strcpy(menu.current_directory, "roms/");
-    // menu.item_count = menu_get_count(menu.current_directory);
 
     menu_load_directory(&menu, "roms/");
 
@@ -32,6 +26,8 @@ int main(int argc, char *argv[])
     char dir_path[512] = "roms/";
 
     menu_mode = MENU;
+
+    menu.is_paused = false;
 
     while (!WindowShouldClose()) {
         BeginDrawing();
@@ -52,7 +48,7 @@ int main(int argc, char *argv[])
         else if (menu_mode == RUNNING) {
             chip8_set_keypad(&cpu);
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 12; i++) {
                 chip8_cycle(&cpu);
             }
 
@@ -64,6 +60,32 @@ int main(int argc, char *argv[])
                 cpu.sound_timer--;
             }
             chip8_render(&cpu);
+
+            if (IsKeyPressed(KEY_P)) {
+                menu_mode = PAUSED;
+            }
+        }
+        else if (menu_mode == PAUSED) {
+
+            menu_pause_display(&pause);
+
+            if (IsKeyPressed(KEY_P)) {
+                menu_mode = RUNNING;
+            }
+
+            if (IsKeyPressed(KEY_ENTER)) {
+                switch (pause.selected_index) {
+                    case 0:
+                        menu_mode = RUNNING;
+                        break;
+                    case 1:
+                        menu_mode = MENU;
+                        break;
+                    case 2:
+                        CloseWindow();
+                        break;
+                }
+            }
         }
 
         EndDrawing();
